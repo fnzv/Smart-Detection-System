@@ -31,7 +31,7 @@ parser.add_argument('--whitelist', action='store', default="whitelist.txt",
                     dest='whitelist',
                     help='Load a list with the only permitted keywords\IP\Domains on the firewall')
 
-parser.add_argument('--loadpcap', action='store', default="capture.pcap",
+parser.add_argument('--loadpcap', action='store', default="none",
                     dest='loadpcap',
                     help='Load a list with banned keywords\IP\Domains that will be applied on the firewall')
                     
@@ -74,6 +74,22 @@ parser.add_argument('--permit', action='store', dest='permitrules', default="non
 
 results = parser.parse_args()
 
+if not(results.loadpcap == "none"):
+                        print "Reading capture file and parsing ip addresses"
+                        print "Only ip addresses found on .pcap will be allowed to pass on this firewall"
+                        try:
+                                allowedIP=os.popen("""tshark  -o column.format:'"Source", "%s"' -r """+results.loadpcap+" |sort|uniq").read()
+                                print allowedIP
+                                for line in allowedIP.split():
+                                        try:
+                                                 socket.inet_aton(line)
+                                                 print "Loaded from pcap  ",line
+                                                 os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j ACCEPT")
+                                        except:
+                                                print "This isn't an IP"
+                                os.popen("iptables -P FORWARD DROP")
+                        except:
+                                print "Error Parsing capture"
 
 
 if(results.log):
