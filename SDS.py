@@ -41,8 +41,15 @@ parser.add_argument('--loadweb', action='store', default="none",
                     
 parser.add_argument('--GUI', action='store_true', default=False,
                     dest='gui',
-                    help='Load the webGUI and start browser to check stats\traffic analysis')      
-              
+                    help='Load the webGUI and start browser to check stats\traffic analysis')  
+                    
+parser.add_argument('--nopolicy', action='store', default="none",
+                    dest='nopolicy',
+                    help='Set "DENY" default policy on given CHAIN.. example: FORWARD,INPUT,OUTPUT')    
+                    
+parser.add_argument('--yespolicy', action='store', default="none",
+                    dest='yespolicy',
+                    help='Set "ACCEPT" default policy on given CHAIN.. example: FORWARD,INPUT,OUTPUT')    
 
 
 parser.add_argument('-R', action='store_true', default=False,
@@ -133,6 +140,15 @@ if not(results.whitelist =="none"):
                             except:
                                 print "Can't load filter list"
 
+
+if not(results.nopolicy == "none"):
+    chain=results.nopolicy
+    os.popen("iptables -P "+chain+" DENY")
+
+if not(results.yespolicy == "none"):
+    chain=results.yespolicy
+    os.popen("iptables -P "+chain+" ACCEPT")
+    
 
 if(results.log):
         
