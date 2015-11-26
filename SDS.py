@@ -1,11 +1,13 @@
 
 #!/usr/bin/python
 #######  Smart Detecton System - An Easy to use Smart-Firewall coded in python
+#######  STATUS: Still under developement
 ####### Features: 
-#######    - 
-#######    -      
-#######    -   
-#######    -    
+#######    - Block unwanted Sites,URLs,IP,DNS requests
+#######    - Analize processes running on host and allow only used connections      
+#######    - Show network connections on an easy-adaptive webGUI(Make Stats...Most used software,ip addresses,dns queries...)
+#######    - Optimize most used network connections with a local dns(file hosts)
+#######    - Parse capture files and extract ip addresses,domains,dns for firewall rules
 ###  Author: Yessou Sami 
 
 #!/usr/bin/python
