@@ -23,11 +23,11 @@ parser.add_argument('-log', action='store_true', default=False,
                     dest='log',
                     help='Enable logging everypacke packets on /var/log')
 
-parser.add_argument('--blacklist', action='store', default="blacklist.txt",
+parser.add_argument('--blacklist', action='store', default="none",
                     dest='blacklist',
                     help='Load a list with banned keywords\IP\Domains that will be applied on the firewall')
             
-parser.add_argument('--whitelist', action='store', default="whitelist.txt",
+parser.add_argument('--whitelist', action='store', default="none",
                     dest='whitelist',
                     help='Load a list with the only permitted keywords\IP\Domains on the firewall')
 
@@ -90,6 +90,48 @@ if not(results.loadpcap == "none"):
                                 os.popen("iptables -P FORWARD DROP")
                         except:
                                 print "Error Parsing capture"
+if not(results.blacklist =="none"):  
+                            blacklist=results.blacklist
+                            try:
+                                f=open(blacklist,"r") #Open external file to see what sites can't pass our gateway
+                                filterlist=f.read()  # list based on keywords
+                                for line in filterlist.split(): #Apply URL Filterbased firewall
+                                        if(";" in line): # ignore line cuz its a comment
+                                                print "Ignore comment"
+                                        else:   # Execute filtering
+                                                try:
+                                                        socket.inet_aton(line)
+                                                        print "I'm an ipv4! ",line
+                                                        #if i'm here cuz line is an ipv4 address
+                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j DROP")
+                                                except: # if i'm there cuz its not an ipv4 so a normal string
+
+                                                        os.popen("iptables -I FORWARD -p tcp --match multiport --dports 80,443 -m string --string "+line+" --algo kmp -j DROP")
+                                                        print "added rule: ",line
+                                                        os.popen("iptables -I FORWARD -p udp --dport 53 -m string --string "+line+" --algo kmp -j DROP")
+                            except:
+                                print "Can't load filter list"
+if not(results.whitelist =="none"):  
+                            whitelist=results.whitelist
+                            try:
+                                f=open(whitelist,"r") #Open external file to see what sites can pass our gateway
+                                filterlist=f.read() 
+                                for line in filterlist.split(): 
+                                        if(";" in line): 
+                                                print "Ignore comment"
+                                        else:   
+                                                try:
+                                                        socket.inet_aton(line)
+                                                        print "I'm an ipv4! ",line
+                                                        #if i'm here cuz line is an ipv4 address
+                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j ACCEPT")
+                                                except: # if i'm there cuz its not an ipv4 so a normal string
+
+                                                        os.popen("iptables -I FORWARD -p tcp --match multiport --dports 80,443 -m string --string "+line+" --algo kmp -j ACCEPT")
+                                                        print "added rule: ",line
+                                                        os.popen("iptables -I FORWARD -p udp --dport 53 -m string --string "+line+" --algo kmp -j ACCEPT")
+                            except:
+                                print "Can't load filter list"
 
 
 if(results.log):
