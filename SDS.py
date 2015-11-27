@@ -8,6 +8,10 @@
 #######    - Show network connections on an easy-adaptive webGUI(Make Stats...Most used software,ip addresses,dns queries...)
 #######    - Optimize most used network connections with a local dns(file hosts)
 #######    - Parse capture files and extract ip addresses,domains,dns for firewall rules
+#######    - Everytime someone hits the firewall via blacklist or whitelist is being logged
+#######    - Captive Portal Registration to the firewall to force users use CP servicse
+
+
 ###  Author: Yessou Sami 
 
 #!/usr/bin/python
