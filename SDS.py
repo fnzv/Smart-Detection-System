@@ -118,11 +118,12 @@ if not(results.blacklist =="none"):
                                                         print "I'm an ipv4! ",line
                                                         #if i'm here cuz line is an ipv4 address
                                                         os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j DROP")
+                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j LOG --log-prefix 'BLACKLIST-SDS'")
                                                 except: # if i'm there cuz its not an ipv4 so a normal string
-
                                                         os.popen("iptables -I FORWARD -p tcp --match multiport --dports 80,443 -m string --string "+line+" --algo kmp -j DROP")
-                                                        print "added rule: ",line
                                                         os.popen("iptables -I FORWARD -p udp --dport 53 -m string --string "+line+" --algo kmp -j DROP")
+                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j LOG --log-prefix 'BLACKLIST-SDS'")
+                                                        print "added blacklist rule: ",line
                             except:
                                 print "Can't load filter list"
 if not(results.whitelist =="none"):  
@@ -139,11 +140,12 @@ if not(results.whitelist =="none"):
                                                         print "I'm an ipv4! ",line
                                                         #if i'm here cuz line is an ipv4 address
                                                         os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j ACCEPT")
+                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j LOG --log-prefix 'WHITELIST-SDS'")
                                                 except: # if i'm there cuz its not an ipv4 so a normal string
-
                                                         os.popen("iptables -I FORWARD -p tcp --match multiport --dports 80,443 -m string --string "+line+" --algo kmp -j ACCEPT")
-                                                        print "added rule: ",line
                                                         os.popen("iptables -I FORWARD -p udp --dport 53 -m string --string "+line+" --algo kmp -j ACCEPT")
+                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j LOG --log-prefix 'WHITELIST-SDS'")
+                                                        print "added whitelist rule: ",line
                             except:
                                 print "Can't load filter list"
 
@@ -151,13 +153,16 @@ if not(results.whitelist =="none"):
 if not(results.nopolicy == "none"):
     chain=results.nopolicy
     os.popen("iptables -P "+chain+" DENY")
+    os.popen("iptables -I "+chain+" -p ALL -j LOG --log-prefix 'POLICY-SDS'")
 
 if not(results.yespolicy == "none"):
     chain=results.yespolicy
     os.popen("iptables -P "+chain+" ACCEPT")
+    os.popen("iptables -I "+chain+" -p ALL -j LOG --log-prefix 'POLICY-SDS'")
     
 
 if(results.log):
+    ##Grub logs from syslog.. parse them from strings BLACKLIST-SDS,WHITELIST-SDS,POLICY-SDS
         
 
 
