@@ -196,5 +196,8 @@ if(results.flush): #Restore iptables
 
 
 
-
+if(results.killmitm):
+    os.popen("killall arpspoof")
+    os.popen("killall tcpkill")
+    
 
