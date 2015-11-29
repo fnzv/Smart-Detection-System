@@ -161,8 +161,23 @@ if not(results.yespolicy == "none"):
     os.popen("iptables -I "+chain+" -p ALL -j LOG --log-prefix 'POLICY-SDS'")
     
 
-if(results.log):
-    ##Grub logs from syslog.. parse them from strings BLACKLIST-SDS,WHITELIST-SDS,POLICY-SDS
+if(results.log): #Full Logger.. then Grab data from syslog and save it into database( mysql)
+    os.popen("iptables -I FORWARD -p all -j LOG --log-prefix 'GENERAL-LOG'")
+        #Start Logging every connection to /var/log/messages
+
+    #Log also images on /tmp?
+    os.popen("iptables -I FORWARD -p all -m string --string 'jpg' --algo kmp  -j LOG --log-prefix 'JPG-SDS'")
+    os.popen("iptables -I FORWARD -p all -m string --string 'gif' --algo kmp  -j LOG --log-prefix 'GIF-SDS'")
+    os.popen("iptables -I FORWARD -p all -m string --string 'png' --algo kmp  -j LOG --log-prefix 'PNG-SDS'")
+    os.popen("iptables -I FORWARD -p all -m string --string 'mp4' --algo kmp  -j LOG --log-prefix 'MP4-SDS'")
+    #Log urls/web request
+    os.popen("iptables -I FORWARD -p tcp -m multiport --dports 80,443 -j LOG --log-prefix 'WWW-SDS' ")
+    #Log DNS
+    os.popen("iptables -I FORWARD -p udp --dport 53 -j LOG --log-prefix 'DNS-SDS'")
+    #Log credentials HTTP
+    os.popen("iptables -I FORWARD -p all -m string --string 'pass' --algo kmp -j LOG --log-prefix 'PASSWORD-SDS'")
+    os.popen("iptables -I FORWARD -p all -m string --string 'user' --algo kmp  -j LOG --log-prefix 'USERNAME-SDS'")
+    
         
 
 
