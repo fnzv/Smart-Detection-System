@@ -205,6 +205,8 @@ if not(results.captive== "none"):
         os.popen("iptables -P POSTROUTING DENY")
         os.popen("iptables -t nat -I PREROUTING -p tcp --dport 443 -j DNAT --to-destination "+cpIP+":80")
         os.popen("iptables -t nat -I PREROUTING -p tcp --dport 80 -j DNAT --to-destination "+cpIP+":80")
+        ###
+        #### Do Captive portal.. when registered allow user to browse internet or make policies to allow certain sites etc..
         
 
 if(results.killmitm):
