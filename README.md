@@ -1,6 +1,8 @@
 # Smart-Detection-System
-Smart-Firewall written in python
-PoC: /Boafi/boafiDS.py
+Smart-Firewall written in python to filter traffic on any GNU\Linux system<br>
+This can be use as an easy to use local hostbased firewall to block unwanted traffic such as bad ip,malware sites,ads,unwanted content on web pages.<br>
+Usage is quite simple just hit -h and every command should have a proper description if not feel free to write me an issue or email.<br>
+
 
 
 #######  Smart Detecton System - An Easy to use Smart-Firewall coded in python
