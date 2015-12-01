@@ -3,7 +3,7 @@
 #######  Smart Detecton System - An Easy to use Smart-Firewall coded in python
 #######  STATUS: Still under developement
 ####### Features\TODO: 
-#######    - Block unwanted Sites,URLs,IP,DNS requests
+###    - Block unwanted Sites,URLs,IP,DNS requests
 #######    - Analize processes running on host and allow only used connections     
 #######    - Anti-Malware Scanning realtime
 #######    - Show network connections on an easy-adaptive webGUI(Make Stats...Most used software,ip addresses,dns queries...)
@@ -57,6 +57,10 @@ parser.add_argument('--nopolicy', action='store', default="none",
 parser.add_argument('--yespolicy', action='store', default="none",
                     dest='yespolicy',
                     help='Set "ACCEPT" default policy on given CHAIN.. example: FORWARD,INPUT,OUTPUT')    
+                    
+parser.add_argument('--captiveportal', action='store', default="none",
+                    dest='captive',
+                    help='Enable the captive portal and any address is being redirected to the given address')    
 
 
 parser.add_argument('-R', action='store_true', default=False,
@@ -194,7 +198,14 @@ if(results.flush): #Restore iptables
         os.popen("iptables-restore < /etc/iptables/rules.v4")
    
 
-
+if not(results.captive== "none"):
+        cpIP=results.captive
+        os.popen("iptables -P FORWARD DENY")
+        os.popen("iptables -P PREROUTING DENY")
+        os.popen("iptables -P POSTROUTING DENY")
+        os.popen("iptables -t nat -I PREROUTING -p tcp --dport 443 -j DNAT --to-destination "+cpIP+":80")
+        os.popen("iptables -t nat -I PREROUTING -p tcp --dport 80 -j DNAT --to-destination "+cpIP+":80")
+        
 
 if(results.killmitm):
     os.popen("killall arpspoof")
