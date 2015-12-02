@@ -16,7 +16,7 @@ Usage is quite simple just hit -h and every command should have a proper descrip
 #######    - Parse capture files and extract ip addresses,domains,dns for firewall rules
 #######    - Everytime someone hits the firewall via blacklist or whitelist is being logged
 #######    - Captive Portal Registration to the firewall to force users to subscribe
-
+#######    - Distinct releases SDS for server & client... "cloud" distributed firewall system  
 
 ####  Author: Yessou Sami 
 
