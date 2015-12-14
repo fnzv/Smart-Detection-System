@@ -4,28 +4,28 @@ This can be use as an easy to use local hostbased firewall to block unwanted tra
 Usage is quite simple just hit -h and every command should have a proper description if not feel free to write me an issue or email.<br>
 
 Small PoC:
+<br><br>
+._________________.<br>
+ | _______________ |<br>
+ | I             I |<br>
+ | I             I |<br>
+ | I    HOST     I |<br>
+ | I             I |<br>
+ | I_____________I |        --->    Any Linux Device     --->   Internet or Gateway  <br>                                      
+ !_________________!              (Raspberry pi,Desktop pc,DD-WRT router)<br>
+    ._[_______]_.<br>
+.___|___________|___.<br>
+|::: ____           |<br>
+|    ~~~~ [CD-ROM]  |<br>
+!___________________!<br>
+<br>
+<br>
+A Forced Way to be the firewall on the network even if you are not the administrator could be :<br>
+-ARP Poisoning then Running the SDS Firewall<br>
+-ICMP Redirect then Running the SDS firewall<br>
+<br>
 
-._________________.
- | _______________ |
- | I             I |
- | I             I |
- | I    HOST     I |
- | I             I |
- | I_____________I |        --->    Any Linux Device     --->   Internet or Gateway                                         
- !_________________!              (Raspberry pi,Desktop pc,DD-WRT router)
-    ._[_______]_.
-.___|___________|___.
-|::: ____           |
-|    ~~~~ [CD-ROM]  |
-!___________________!
-
-
-A Forced Way to be the firewall on the network even if you are not the administrator could be :
--ARP Poisoning then Running the SDS Firewall
--ICMP Redirect then Running the SDS firewall
-
-
-
+<br>
 #######  Smart Detecton System - An Easy to use Smart-Firewall coded in python
 #######  STATUS: Still under developement
 ####### Features: 
