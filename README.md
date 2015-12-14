@@ -5,19 +5,11 @@ Usage is quite simple just hit -h and every command should have a proper descrip
 
 Small PoC:
 <br><br>
-._________________.<br>
- | _______________ |<br>
- | I             I |<br>
- | I             I |<br>
- | I    HOST     I |<br>
- | I             I |<br>
- | I_____________I |        --->    Any Linux Device     --->   Internet or Gateway  <br>                                      
- !_________________!              (Raspberry pi,Desktop pc,DD-WRT router)<br>
-    ._[_______]_.<br>
-.___|___________|___.<br>
-|::: ____           |<br>
-|    ~~~~ [CD-ROM]  |<br>
-!___________________!<br>
+
+Your Host(s)  --->    Any Linux Device     --->   Internet or Gateway  <br>                                      
+
+Device Examples: (Raspberry pi,odroid,Desktop pc,DD-WRT or custom router,Virtual Machine)<br>
+
 <br>
 <br>
 A Forced Way to be the firewall on the network even if you are not the administrator could be :<br>
