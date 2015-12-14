@@ -43,7 +43,7 @@ parser.add_argument('--loadpcap', action='store', default="none",
                     help='Load a list with banned keywords\IP\Domains that will be applied on the firewall')
                     
 parser.add_argument('--loadweb', action='store', default="none",
-                    dest='loadpcap',
+                    dest='loadweb',
                     help='Load a list with banned keywords\IP\Domains from the web')
                     
 parser.add_argument('--GUI', action='store_true', default=False,
