@@ -11,6 +11,7 @@
 #######    - Parse capture files and extract ip addresses,domains,dns for firewall rules
 #######    - Everytime someone hits the firewall via blacklist or whitelist is being logged
 #######    - Captive Portal Registration to the firewall to force users use CP servicse
+#######    - Force Redirect any DNS Query to your favorite DNS Sever
 
 
 ###  Author: Yessou Sami 
@@ -62,6 +63,9 @@ parser.add_argument('--captiveportal', action='store', default="none",
                     dest='captive',
                     help='Enable the captive portal and any address is being redirected to the given address')    
 
+parser.add_argument('--dns-redirect', action='store', default="none",
+                    dest='dnsre',
+                    help='Redirect all DNS queries to given dns sever address')    
 
 parser.add_argument('-R', action='store_true', default=False,
                     dest='flush',
@@ -208,6 +212,10 @@ if not(results.captive== "none"):
         ###
         #### Do Captive portal.. when registered allow user to browse internet or make policies to allow certain sites etc..
         
+if not(results.dnsre =="none"):
+       dnsServer=results.dnsre
+       os.popen("iptables -t nat -I PREROUTING -p udp --dport 53 -j DNAT --to-destination "+dnsServer+":53")
+       
 
 if(results.killmitm):
     os.popen("killall arpspoof")
