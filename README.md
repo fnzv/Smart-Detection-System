@@ -3,6 +3,27 @@ Smart-Firewall written in python to filter traffic on any GNU\Linux system<br>
 This can be use as an easy to use local hostbased firewall to block unwanted traffic such as bad ip,malware sites,ads,unwanted content on web pages.<br>
 Usage is quite simple just hit -h and every command should have a proper description if not feel free to write me an issue or email.<br>
 
+Small PoC:
+
+._________________.
+ | _______________ |
+ | I             I |
+ | I             I |
+ | I    HOST     I |
+ | I             I |
+ | I_____________I |        --->    Any Linux Device     --->   Internet or Gateway                                         
+ !_________________!              (Raspberry pi,Desktop pc,DD-WRT router)
+    ._[_______]_.
+.___|___________|___.
+|::: ____           |
+|    ~~~~ [CD-ROM]  |
+!___________________!
+
+
+A Forced Way to be the firewall on the network even if you are not the administrator could be :
+-ARP Poisoning then Running the SDS Firewall
+-ICMP Redirect then Running the SDS firewall
+
 
 
 #######  Smart Detecton System - An Easy to use Smart-Firewall coded in python
