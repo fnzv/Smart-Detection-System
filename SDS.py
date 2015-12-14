@@ -223,7 +223,8 @@ if not(results.dnsre =="none"):
        
 
 if(results.nodns):
-        cleanip=os.popen("""iptables -t nat -L PREROUTING  | grep "domain to:" | awk '{ $1=""; $2=""; $3=""; $4=""; $5=""; $6=""; $7="";  print }'""").read().replace("to:","")
+        ip=os.popen("""iptables -t nat -L PREROUTING  | grep "domain to:" | awk '{ $1=""; $2=""; $3=""; $4=""; $5=""; $6=""; $7="";  print }'""").read().replace("to:","")
+        cleanip=ip.strip()
         os.popen("iptables -t nat -D PREROUTING -p udp --dport 53 -j DNAT --to-destination "+cleanip)
 
 
