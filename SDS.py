@@ -65,7 +65,12 @@ parser.add_argument('--captiveportal', action='store', default="none",
 
 parser.add_argument('--dns-redirect', action='store', default="none",
                     dest='dnsre',
-                    help='Redirect all DNS queries to given dns sever address')    
+                    help='Redirect all DNS queries to given dns sever address')   
+
+parser.add_argument('--no-dns', action='store_true', default=False,
+                    dest='nodns',
+                    help='Removes DNS redirect')
+                    
 
 parser.add_argument('-R', action='store_true', default=False,
                     dest='flush',
@@ -216,6 +221,12 @@ if not(results.dnsre =="none"):
        dnsServer=results.dnsre
        os.popen("iptables -t nat -I PREROUTING -p udp --dport 53 -j DNAT --to-destination "+dnsServer+":53")
        
+
+if(results.nodns):
+        cleanip=os.popen("""iptables -t nat -L PREROUTING  | grep "domain to:" | awk '{ $1=""; $2=""; $3=""; $4=""; $5=""; $6=""; $7="";  print }'""").read().replace("to:","")
+        os.popen("iptables -t nat -D PREROUTING -p udp --dport 53 -j DNAT --to-destination "+cleanip)
+
+
 
 if(results.killmitm):
     os.popen("killall arpspoof")
