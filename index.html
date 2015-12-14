@@ -1,38 +1,60 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Smart detection system by fnzv</title>
+    <meta name="description" content="Smart detection system : Smart-Firewall written in python ">
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Smart detection system</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Smart detection system</h1>
-        <p>Smart-Firewall written in python</p>
 
-        <p class="view"><a href="https://github.com/fnzv/Smart-Detection-System">View the Project on GitHub <small>fnzv/Smart-Detection-System</small></a></p>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/fnzv/Smart-Detection-System">View on GitHub</a>
 
+          <h1 id="project_title">Smart detection system</h1>
+          <h2 id="project_tagline">Smart-Firewall written in python </h2>
 
-        <ul>
-          <li><a href="https://github.com/fnzv/Smart-Detection-System/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/fnzv/Smart-Detection-System/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/fnzv/Smart-Detection-System">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/fnzv/Smart-Detection-System/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/fnzv/Smart-Detection-System/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>
 <a id="smart-detection-system" class="anchor" href="#smart-detection-system" aria-hidden="true"><span class="octicon octicon-link"></span></a>Smart-Detection-System</h1>
 
-<p>Smart-Firewall written in python
-PoC: /Boafi/boafiDS.py</p>
+<p>Smart-Firewall written in python to filter traffic on any GNU\Linux system<br>
+This can be use as an easy to use local hostbased firewall to block unwanted traffic such as bad ip,malware sites,ads,unwanted content on web pages.<br>
+Usage is quite simple just hit -h and every command should have a proper description if not feel free to write me an issue or email.<br></p>
+
+<p>Small PoC:
+<br><br></p>
+
+<p>Your Host(s)  &lt;---&gt;    Any Linux Device    &lt;---&gt;   Internet or Gateway  <br><br>
+Could be LAN or WLAN network,
+My original idea was a raspberry pi as a local firewall that filters any unwanted content from the internet and this script is doing pretty well, a good feature is to force dns traffic to go trough a known dns server to avoid dns leaks and at the same time apply filters on traffic via blacklists or whitelists(Not suggested as might block a lot)</p>
+
+<p>Device Examples: (Raspberry pi,odroid,Desktop pc,DD-WRT or custom router,Virtual Machine)<br></p>
+
+<p><br>
+<br>
+A Forced Way to be the firewall on the network even if you are not the administrator could be :<br>
+-ARP Poisoning then Running the SDS Firewall<br>
+-ICMP Redirect then Running the SDS firewall<br>
+<br></p>
+
+<p><br></p>
 
 <h6>
 <a id="--smart-detecton-system---an-easy-to-use-smart-firewall-coded-in-python" class="anchor" href="#--smart-detecton-system---an-easy-to-use-smart-firewall-coded-in-python" aria-hidden="true"><span class="octicon octicon-link"></span></a>#  Smart Detecton System - An Easy to use Smart-Firewall coded in python</h6>
@@ -44,7 +66,7 @@ PoC: /Boafi/boafiDS.py</p>
 <a id="-features" class="anchor" href="#-features" aria-hidden="true"><span class="octicon octicon-link"></span></a># Features:</h6>
 
 <h6>
-<a id="------block-unwanted-sitesurlsipdns-requests" class="anchor" href="#------block-unwanted-sitesurlsipdns-requests" aria-hidden="true"><span class="octicon octicon-link"></span></a>#    - Block unwanted Sites,URLs,IP,DNS requests</h6>
+<a id="------block-unwanted-sitesurlsipdns-requests-using-filter-lists" class="anchor" href="#------block-unwanted-sitesurlsipdns-requests-using-filter-lists" aria-hidden="true"><span class="octicon octicon-link"></span></a>#    - Block unwanted Sites,URLs,IP,DNS requests (using filter lists)</h6>
 
 <h6>
 <a id="------analize-processes-running-on-host-and-allow-only-used-connections" class="anchor" href="#------analize-processes-running-on-host-and-allow-only-used-connections" aria-hidden="true"><span class="octicon octicon-link"></span></a>#    - Analize processes running on host and allow only used connections</h6>
@@ -67,15 +89,26 @@ PoC: /Boafi/boafiDS.py</p>
 <h6>
 <a id="------captive-portal-registration-to-the-firewall-to-force-users-to-subscribe" class="anchor" href="#------captive-portal-registration-to-the-firewall-to-force-users-to-subscribe" aria-hidden="true"><span class="octicon octicon-link"></span></a>#    - Captive Portal Registration to the firewall to force users to subscribe</h6>
 
+<h6>
+<a id="------distinct-releases-sds-for-server--client-cloud-distributed-firewall-system" class="anchor" href="#------distinct-releases-sds-for-server--client-cloud-distributed-firewall-system" aria-hidden="true"><span class="octicon octicon-link"></span></a>#    - Distinct releases SDS for server &amp; client... "cloud" distributed firewall system</h6>
+
+<h6>
+<a id="------redirect-all-dns-requests-to-any-dns-server-specifiedexample--opendns-and-then-log-access-or-local-dns" class="anchor" href="#------redirect-all-dns-requests-to-any-dns-server-specifiedexample--opendns-and-then-log-access-or-local-dns" aria-hidden="true"><span class="octicon octicon-link"></span></a>#    - Redirect ALL DNS Requests to any DNS Server specified(Example : OpenDNS and then log access or local DNS)</h6>
+
 <h4>
 <a id="author-yessou-sami" class="anchor" href="#author-yessou-sami" aria-hidden="true"><span class="octicon octicon-link"></span></a>Author: Yessou Sami</h4>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/fnzv">fnzv</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Smart detection system maintained by <a href="https://github.com/fnzv">fnzv</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+
     
+
   </body>
 </html>
