@@ -6,7 +6,7 @@ Usage is quite simple just hit -h and every command should have a proper descrip
 Small PoC:
 <br><br>
 
-Your Host(s)  --->    Any Linux Device     --->   Internet or Gateway  <br>                                      
+Your Host(s)  <--->    Any Linux Device    <--->   Internet or Gateway  <br>                                      
 
 Device Examples: (Raspberry pi,odroid,Desktop pc,DD-WRT or custom router,Virtual Machine)<br>
 
