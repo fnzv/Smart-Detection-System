@@ -7,6 +7,8 @@ Small PoC:
 <br><br>
 
 Your Host(s)  <--->    Any Linux Device    <--->   Internet or Gateway  <br>                                      
+Could be LAN or WLAN network,
+My original idea was a raspberry pi as a local firewall that filters any unwanted content from the internet and this script is doing pretty well, a good feature is to force dns traffic to go trough a known dns server to avoid dns leaks and at the same time apply filters on traffic via blacklists or whitelists(Not suggested as might block a lot)
 
 Device Examples: (Raspberry pi,odroid,Desktop pc,DD-WRT or custom router,Virtual Machine)<br>
 
