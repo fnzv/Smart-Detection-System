@@ -23,13 +23,10 @@ import os,time,argparse,socket
 parser = argparse.ArgumentParser()
 
 
-parser.add_argument('-i', action='store', dest='int', default="wlan0",
-                    help='Interface to log packets')
-
 
 parser.add_argument('-log', action='store_true', default=False,
                     dest='log',
-                    help='Enable logging everypacke packets on /var/log')
+                    help='Enable packets logging on /var/log')
 
 parser.add_argument('--blacklist', action='store', default="none",
                     dest='blacklist',
