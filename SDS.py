@@ -12,6 +12,7 @@
 #######    - Everytime someone hits the firewall via blacklist or whitelist is being logged
 #######    - Captive Portal Registration to the firewall to force users use CP servicse
 #######    - Force Redirect any DNS Query to your favorite DNS Sever
+#######    - Add SNAT\MASQUERADING to hide local servers\routers\network devices on local replies
 
 
 ###  Author: Yessou Sami 
