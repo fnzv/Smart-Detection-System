@@ -67,6 +67,14 @@ parser.add_argument('--dns-redirect', action='store', default="none",
 parser.add_argument('--no-dns', action='store_true', default=False,
                     dest='nodns',
                     help='Removes DNS redirect')
+                  
+parser.add_argument('--icmp-redirect', action='store', default="none",
+                    dest='icmpre',
+                    help='Redirect all ICMP Requests to given address')   
+
+parser.add_argument('--no-icmp', action='store_true', default=False,
+                    dest='noicmp',
+                    help='Removes ICMP redirect')
                     
 
 parser.add_argument('-R', action='store_true', default=False,
@@ -82,7 +90,6 @@ parser.add_argument('--deny', action='store', dest='denyrules', default="none", 
 
 
 parser.add_argument('--permit', action='store', dest='permitrules', default="none", help='Write permit rules')
-
 
 
 ##Still alpha.. not implemented mitm firewall yet
@@ -225,6 +232,15 @@ if(results.nodns):
         os.popen("iptables -t nat -D PREROUTING -p udp --dport 53 -j DNAT --to-destination "+cleanip)
 
 
+if(results.icmpre == "none"):
+      fakedest=results.icmpre
+      os.popen("iptables -t nat -I PREROUTING -p icmp --icmp-type echo-request -j DNAT --to-destination "+fakedest+"")
+      os.popen("iptables -t nat -I PREROUTING -p icmp --icmp-type echo-request -j DNAT --to-destination "+fakedest+"")
+
+if(results.noicmp):
+        ip=os.popen("""iptables -t nat -L PREROUTING  | grep "icmp echo-request to:" | awk '{ print $8; exit }'""").read().replace("to:","")
+        cleanip=ip.strip()
+        os.popen("iptables -t nat -D PREROUTING -p icmp --icmp-type echo-request -j DNAT --to-destination "+cleanip+"")
 
 if(results.killmitm):
     os.popen("killall arpspoof")
