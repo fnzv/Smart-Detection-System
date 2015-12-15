@@ -82,6 +82,10 @@ parser.add_argument('-R', action='store_true', default=False,
                     dest='flush',
                     help='Restore default iptables rules')
 
+parser.add_argument('-S', action='store_true', default=False,
+                    dest='save',
+                    help='Save iptables rules on startup **warning** deletes old ones')
+
 
 parser.add_argument('-rule', action='store', dest='ena', default="none", help='Manually create firewall rules via an easy syntax language')
 
@@ -242,6 +246,10 @@ if(results.noicmp):
         ip=os.popen("""iptables -t nat -L PREROUTING  | grep "icmp echo-request to:" | awk '{ print $8; exit }'""").read().replace("to:","")
         cleanip=ip.strip()
         os.popen("iptables -t nat -D PREROUTING -p icmp --icmp-type echo-request -j DNAT --to-destination "+cleanip+"")
+
+if(results.save):
+        os.popen("iptables-save >> /etc/iptables/rules.v4")
+        print "Saved rules!"
 
 if(results.killmitm):
     os.popen("killall arpspoof")
