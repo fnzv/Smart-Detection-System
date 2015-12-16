@@ -28,6 +28,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-log', action='store_true', default=False,
                     dest='log',
                     help='Enable packets logging on /var/log')
+                    
+parser.add_argument('--DDosProt', action='store_true', default=False,
+                    dest='ddosprot',
+                    help='Limit incoming traffic')  ##DDOS Protection only if policies must be deny 
 
 parser.add_argument('--blacklist', action='store', default="none",
                     dest='blacklist',
@@ -108,6 +112,12 @@ parser.add_argument('--dg', action='store', dest='dgIP', default="none", help='S
 
 
 results = parser.parse_args()
+
+if(results.ddosport):
+        os.popen("iptables -I INPUT -p any -m limit --limit 10/s -j ACCEPT")
+        os.popen("iptables -I FORWARD -p any -m limit --limit 10/s -j ACCEPT")
+        
+
 
 if not(results.loadpcap == "none"):
                         print "Reading capture file and parsing ip addresses"
