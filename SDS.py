@@ -240,7 +240,6 @@ if(results.nodns):
 if(results.icmpre == "none"):
       fakedest=results.icmpre
       os.popen("iptables -t nat -I PREROUTING -p icmp --icmp-type echo-request -j DNAT --to-destination "+fakedest)
-      os.popen("iptables -t nat -I PREROUTING -p icmp --icmp-type echo-request -j DNAT --to-destination "+fakedest)
 
 if(results.noicmp):
         ip=os.popen("""iptables -t nat -L PREROUTING  | grep "icmp echo-request to:" | awk '{ print $8; exit }'""").read().replace("to:","")
