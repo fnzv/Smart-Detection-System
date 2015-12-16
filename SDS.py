@@ -87,7 +87,7 @@ parser.add_argument('-S', action='store_true', default=False,
                     help='Save iptables rules on startup **warning** deletes old ones')
 
 
-parser.add_argument('-rule', action='store', dest='ena', default="none", help='Manually create firewall rules via an easy syntax language')
+parser.add_argument('-rule', action='store', dest='rule', default=False, help='Manually create firewall rules via an easy syntax language')
 
 
 parser.add_argument('--deny', action='store', dest='denyrules', default="none", help='Write deny rules')
@@ -250,6 +250,40 @@ if(results.noicmp):
 if(results.save):
         os.popen("iptables-save >> /etc/iptables/rules.v4")
         print "Saved rules!"
+
+if not(results.rule):
+
+ #Read values from ARGS and send them directly to iptables
+#Static IP tables rules...
+  deny=str(results.denyrules)
+  print "using rules ",deny
+  if("tcp" in deny):
+   
+      if("http" in deny):
+         os.popen("iptables -I FORWARD -p tcp --dport 80 -j DROP")
+      if("https" in deny):
+        os.popen("iptables -I FORWARD -p tcp --dport 443 -j DROP")
+      if("ftp" in deny):
+        os.popen("iptables -I FORWARD -p tcp --dport 21 -j DROP")
+      if("icmp" in deny):
+         os.popen("iptables -I FORWARD -p icmp --icmp-type 8 -j DROP")
+      if("dns" in deny):
+         os.popen("iptables -I FORWARD -p udp --dport 53 -j DROP")
+  ### PERMIT RULES
+  permit=str(results.permitrules)
+  print "using rules ",permit
+  if("tcp" in permit):
+  
+     if("http" in permit):
+          os.popen("iptables -I FORWARD -p tcp --dport 80 -j ACCEPT")
+     if("https" in permit):
+         os.popen("iptables -I FORWARD -p tcp --dport 443 -j ACCEPT")
+     if("ftp" in permit):
+         os.popen("iptables -I FORWARD -p tcp --dport 21 -j ACCEPT")
+     if("icmp" in permit):
+        os.popen("iptables -I FORWARD -p icmp --icmp-type 8 -j ACCEPT")
+     if("dns" in permit):
+         os.popen("iptables -I FORWARD -p udp --dport 53 -j ACCEPT")
 
 if(results.killmitm):
     os.popen("killall arpspoof")
