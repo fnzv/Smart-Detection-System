@@ -19,6 +19,8 @@ A Forced Way to be the firewall on the network even if you are not the administr
 -ICMP Redirect then Running the SDS firewall<br>
 <br>
 
+***WARNING***:Keyword based filtering could fail as it's an experimental feature of iptables .. overall works fine and blocks unwanted sites
+
 <br>
 #######  Smart Detecton System - An Easy to use Smart-Firewall coded in python
 #######  STATUS: Still under developement
