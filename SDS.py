@@ -13,6 +13,7 @@
 #######    - Captive Portal Registration to the firewall to force users use CP servicse
 #######    - Force Redirect any DNS Query to your favorite DNS Sever
 #######    - Add SNAT\MASQUERADING to hide local servers\routers\network devices on local replies
+#######    - Time based firewall,blacklist,whitelist,dns redirection....
 
 
 ###  Author: Yessou Sami 
@@ -119,11 +120,14 @@ if not(results.timerange=="none"): #09:00,18:00
         print "interval: "+interval
         time1=interval[0]
         time2=interval[1]
+        timeout="-m time --timestart "+time1+" --timestop "+time2
+else:
+        timeout=""
 
 
 if(results.ddosport):
-        os.popen("iptables -I INPUT -p any -m limit --limit 10/s -j ACCEPT")
-        os.popen("iptables -I FORWARD -p any -m limit --limit 10/s -j ACCEPT")
+        os.popen("iptables -I INPUT -p any -m limit --limit 10/s "+timeout+" -j ACCEPT")
+        os.popen("iptables -I FORWARD -p any -m limit --limit 10/s "+timeout+" -j ACCEPT")
         
 
 
@@ -137,7 +141,7 @@ if not(results.loadpcap == "none"):
                                         try:
                                                  socket.inet_aton(line)
                                                  print "Loaded from pcap  ",line
-                                                 os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j ACCEPT")
+                                                 os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp "+timeout+" -j ACCEPT")
                                         except:
                                                 print "This isn't an IP"
                                 os.popen("iptables -P FORWARD DROP")
@@ -156,8 +160,8 @@ if not(results.blacklist =="none"):
                                                         socket.inet_aton(line)
                                                         print "I'm an ipv4! ",line
                                                         #if i'm here cuz line is an ipv4 address
-                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j DROP")
-                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j LOG --log-prefix 'BLACKLIST-SDS'")
+                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp  -j DROP")
+                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp  -j LOG --log-prefix 'BLACKLIST-SDS'")
                                                 except: # if i'm there cuz its not an ipv4 so a normal string
                                                         os.popen("iptables -I FORWARD -p tcp --match multiport --dports 80,443 -m string --string "+line+" --algo kmp -j DROP")
                                                         os.popen("iptables -I FORWARD -p udp --dport 53 -m string --string "+line+" --algo kmp -j DROP")
@@ -178,11 +182,11 @@ if not(results.whitelist =="none"):
                                                         socket.inet_aton(line)
                                                         print "I'm an ipv4! ",line
                                                         #if i'm here cuz line is an ipv4 address
-                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j ACCEPT")
+                                                        os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp "+timeout+" -j ACCEPT")
                                                         os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j LOG --log-prefix 'WHITELIST-SDS'")
                                                 except: # if i'm there cuz its not an ipv4 so a normal string
-                                                        os.popen("iptables -I FORWARD -p tcp --match multiport --dports 80,443 -m string --string "+line+" --algo kmp -j ACCEPT")
-                                                        os.popen("iptables -I FORWARD -p udp --dport 53 -m string --string "+line+" --algo kmp -j ACCEPT")
+                                                        os.popen("iptables -I FORWARD -p tcp --match multiport --dports 80,443 -m string --string "+line+" --algo kmp "+timeout+" -j ACCEPT")
+                                                        os.popen("iptables -I FORWARD -p udp --dport 53 -m string --string "+line+" --algo kmp "+timeout+" -j ACCEPT")
                                                         os.popen("iptables -I FORWARD -p ALL -m string --string  "+line+" --algo kmp -j LOG --log-prefix 'WHITELIST-SDS'")
                                                         print "added whitelist rule: ",line
                             except:
@@ -239,30 +243,30 @@ if not(results.captive== "none"):
         os.popen("iptables -P FORWARD DENY")
         os.popen("iptables -P PREROUTING DENY")
         os.popen("iptables -P POSTROUTING DENY")
-        os.popen("iptables -t nat -I PREROUTING -p tcp --dport 443 -j DNAT --to-destination "+cpIP+":80")
-        os.popen("iptables -t nat -I PREROUTING -p tcp --dport 80 -j DNAT --to-destination "+cpIP+":80")
+        os.popen("iptables -t nat -I PREROUTING -p tcp --dport 443 "+timeout+" -j DNAT --to-destination "+cpIP+":80")
+        os.popen("iptables -t nat -I PREROUTING -p tcp --dport 80 "+timeout+" -j DNAT --to-destination "+cpIP+":80")
         ###
         #### Do Captive portal.. when registered allow user to browse internet or make policies to allow certain sites etc..
         
 if not(results.dnsre =="none"):
        dnsServer=results.dnsre
-       os.popen("iptables -t nat -I PREROUTING -p udp --dport 53 -j DNAT --to-destination "+dnsServer+":53")
+       os.popen("iptables -t nat -I PREROUTING -p udp --dport 53 "+timeout+" -j DNAT --to-destination "+dnsServer+":53")
        
 
 if(results.nodns):
         ip=os.popen("""iptables -t nat -L PREROUTING  | grep "domain to:" | awk '{ print $8; exit }'""").read().replace("to:","")
         cleanip=ip.strip()
-        os.popen("iptables -t nat -D PREROUTING -p udp --dport 53 -j DNAT --to-destination "+cleanip)
+        os.popen("iptables -t nat -D PREROUTING -p udp --dport 53 "+timeout+" -j DNAT --to-destination "+cleanip)
 
 
 if(results.icmpre == "none"):
       fakedest=results.icmpre
-      os.popen("iptables -t nat -I PREROUTING -p icmp --icmp-type echo-request -j DNAT --to-destination "+fakedest)
+      os.popen("iptables -t nat -I PREROUTING -p icmp --icmp-type echo-request "+timeout+" -j DNAT --to-destination "+fakedest)
 
 if(results.noicmp):
         ip=os.popen("""iptables -t nat -L PREROUTING  | grep "icmp echo-request to:" | awk '{ print $8; exit }'""").read().replace("to:","")
         cleanip=ip.strip()
-        os.popen("iptables -t nat -D PREROUTING -p icmp --icmp-type echo-request -j DNAT --to-destination "+cleanip)
+        os.popen("iptables -t nat -D PREROUTING -p icmp --icmp-type echo-request "+timeout+" -j DNAT --to-destination "+cleanip)
 
 if(results.save):
         os.popen("iptables-save >> /etc/iptables/rules.v4")
@@ -277,30 +281,30 @@ if not(results.rule):
   if("tcp" in deny):
    
       if("http" in deny):
-         os.popen("iptables -I FORWARD -p tcp --dport 80 -j DROP")
+         os.popen("iptables -I FORWARD -p tcp --dport 80 "+timeout+" -j DROP")
       if("https" in deny):
-        os.popen("iptables -I FORWARD -p tcp --dport 443 -j DROP")
+        os.popen("iptables -I FORWARD -p tcp --dport 443 "+timeout+" -j DROP")
       if("ftp" in deny):
-        os.popen("iptables -I FORWARD -p tcp --dport 21 -j DROP")
+        os.popen("iptables -I FORWARD -p tcp --dport 21 "+timeout+" -j DROP")
       if("icmp" in deny):
-         os.popen("iptables -I FORWARD -p icmp --icmp-type 8 -j DROP")
+         os.popen("iptables -I FORWARD -p icmp --icmp-type 8 "+timeout+" -j DROP")
       if("dns" in deny):
-         os.popen("iptables -I FORWARD -p udp --dport 53 -j DROP")
+         os.popen("iptables -I FORWARD -p udp --dport 53 "+timeout+" -j DROP")
   ### PERMIT RULES
   permit=str(results.permitrules)
   print "using rules ",permit
   if("tcp" in permit):
   
      if("http" in permit):
-          os.popen("iptables -I FORWARD -p tcp --dport 80 -j ACCEPT")
+          os.popen("iptables -I FORWARD -p tcp --dport 80 "+timeout+" -j ACCEPT")
      if("https" in permit):
-         os.popen("iptables -I FORWARD -p tcp --dport 443 -j ACCEPT")
+         os.popen("iptables -I FORWARD -p tcp --dport 443 "+timeout+" -j ACCEPT")
      if("ftp" in permit):
-         os.popen("iptables -I FORWARD -p tcp --dport 21 -j ACCEPT")
+         os.popen("iptables -I FORWARD -p tcp --dport 21 "+timeout+" -j ACCEPT")
      if("icmp" in permit):
-        os.popen("iptables -I FORWARD -p icmp --icmp-type 8 -j ACCEPT")
+        os.popen("iptables -I FORWARD -p icmp --icmp-type 8 "+timeout+" -j ACCEPT")
      if("dns" in permit):
-         os.popen("iptables -I FORWARD -p udp --dport 53 -j ACCEPT")
+         os.popen("iptables -I FORWARD -p udp --dport 53 "+timeout+" -j ACCEPT")
 
 if(results.killmitm):
     os.popen("killall arpspoof")
