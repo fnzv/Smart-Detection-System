@@ -23,7 +23,9 @@ import os,time,argparse,socket
 
 parser = argparse.ArgumentParser()
 
-
+parser.add_argument('-timerange', action='store', default="none",
+                    dest='timerange',
+                    help='Time range intervall that will be applied on rule or SDS argument \nExample: -timerange 09:00,18:00 ')
 
 parser.add_argument('-log', action='store_true', default=False,
                     dest='log',
@@ -109,9 +111,15 @@ parser.add_argument('--dg', action='store', dest='dgIP', default="none", help='S
 
 
 
-
-
 results = parser.parse_args()
+
+if not(results.timerange=="none"): #09:00,18:00
+        interval=results.timerange
+        interval=interval.split(",")
+        print "interval: "+interval
+        time1=interval[0]
+        time2=interval[1]
+
 
 if(results.ddosport):
         os.popen("iptables -I INPUT -p any -m limit --limit 10/s -j ACCEPT")
