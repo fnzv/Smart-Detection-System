@@ -14,7 +14,9 @@
 #######    - Force Redirect any DNS Query to your favorite DNS Sever
 #######    - Add SNAT\MASQUERADING to hide local servers\routers\network devices on local replies
 #######    - Time based firewall,blacklist,whitelist,dns redirection....
-
+#######    - Add Local\External Database interaction to store LOGS,ERRORs,RULES
+#######    - Allow Remote control P2P leaving open socket (CMD-[encrypted with PGP]) // For other SDSs to comunicate togheder and share rules
+#######    - Allow Remote control via WebInterface login 
 
 ###  Author: Yessou Sami 
 
