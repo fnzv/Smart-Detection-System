@@ -24,6 +24,10 @@ import os,time,argparse,socket
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument('-trafficlimit', action='store', default="none",
+                    dest='trafflimit',
+                    help='Limit traffic rate... 10/s = 10 packet per second .. 10/m = 10 per minute ..10/h per hour')
+
 parser.add_argument('-timerange', action='store', default="none",
                     dest='timerange',
                     help='Time range intervall that will be applied on rule or SDS argument \nExample: -timerange 09:00,18:00 ')
@@ -32,10 +36,6 @@ parser.add_argument('-log', action='store_true', default=False,
                     dest='log',
                     help='Enable packets logging on /var/log')
                     
-parser.add_argument('--DDosProt', action='store_true', default=False,
-                    dest='ddosprot',
-                    help='Limit incoming traffic')  ##DDOS Protection only if policies must be deny 
-
 parser.add_argument('--blacklist', action='store', default="none",
                     dest='blacklist',
                     help='Load a list with banned keywords\IP\Domains that will be applied on the firewall')
@@ -125,10 +125,11 @@ else:
         timeout=""
 
 
-if(results.ddosport):
-        os.popen("iptables -I INPUT -p any -m limit --limit 10/s "+timeout+" -j ACCEPT")
-        os.popen("iptables -I FORWARD -p any -m limit --limit 10/s "+timeout+" -j ACCEPT")
-        
+if not (results.trafflimit=="none"):
+      tl=results.trafficlimit
+      ## TODO :Control string error 
+      os.popen("iptables -I INPUT -p any -m limit --limit "+tl" "+timeout+" -j ACCEPT")
+      os.popen("iptables -I FORWARD -p any -m limit --limit "+tl" "+timeout+" -j ACCEPT")
 
 
 if not(results.loadpcap == "none"):
