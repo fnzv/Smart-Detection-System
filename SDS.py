@@ -130,9 +130,12 @@ else:
 if not (results.trafflimit=="none"):
       tl=results.trafflimit
       ## TODO :Control string error 
-      os.popen("iptables -I INPUT -p any -m limit --limit "+tl+" "+timeout+" -j ACCEPT")
-      os.popen("iptables -I OUTPUT -p any -m limit --limit "+tl+" "+timeout+" -j ACCEPT")
-      os.popen("iptables -I FORWARD -p any -m limit --limit "+tl+" "+timeout+" -j ACCEPT")
+      os.popen("iptables -I INPUT -p tcp -m limit --limit "+tl+" "+timeout+" -j ACCEPT")
+      os.popen("iptables -I OUTPUT -p tcp -m limit --limit "+tl+" "+timeout+" -j ACCEPT")
+      os.popen("iptables -I FORWARD -p tcp -m limit --limit "+tl+" "+timeout+" -j ACCEPT")
+      os.popen("iptables -I INPUT -p udp -m limit --limit "+tl+" "+timeout+" -j ACCEPT")
+      os.popen("iptables -I OUTPUT -p udp -m limit --limit "+tl+" "+timeout+" -j ACCEPT")
+      os.popen("iptables -I FORWARD -p udp -m limit --limit "+tl+" "+timeout+" -j ACCEPT")
 
 
 if not(results.loadpcap == "none"):
