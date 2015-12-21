@@ -267,7 +267,7 @@ if(results.save):
         os.popen("iptables-save >> /etc/iptables/rules.v4")
         print "Saved rules!"
 
-if not(results.rule):
+if(results.rule):
 
  #Read values from ARGS and send them directly to iptables
 #Static IP tables rules...
