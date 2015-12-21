@@ -22,9 +22,13 @@
 
 #!/usr/bin/python
 
-import os,time,argparse,socket
+import os,time,argparse,socket,pprint
+from netaddr import *
+
 
 parser = argparse.ArgumentParser()
+
+
 
 parser.add_argument('-trafficlimit', action='store', default="none",
                     dest='trafflimit',
@@ -107,11 +111,7 @@ parser.add_argument('--permit', action='store', dest='permitrules', default="non
 
 
 ##Still alpha.. not implemented mitm firewall yet
-parser.add_argument('--spoof', action='store', default="none", dest='arpspoof', help='Enable arp spoofing to apply firewall rules')
-
-
-parser.add_argument('--dg', action='store', dest='dgIP', default="none", help='Specify the ip address of the default gateway to spoof ')
-
+parser.add_argument('--spoof', action='store', default="none", dest='spoof', help='Force Firewall to all hosts even if not connected to our machine directly..\n Specify Default gateway')
 
 
 results = parser.parse_args()
@@ -226,18 +226,6 @@ if(results.log): #Full Logger.. then Grab data from syslog and save it into data
     os.popen("iptables -I FORWARD -p all -m string --string 'user' --algo kmp  -j LOG --log-prefix 'USERNAME-SDS'")
     
 
-if not(results.arpspoof=="none"):
-        print "im in"
-        target=results.mitm
-        if(results.dgIP=="none"):
-                dg=os.popen("ip route show | grep 'default' | awk '{print $3}' ").read()
-                dg=dg.split()[0] #Takes First Default Gateway IP from ip route table
-                print dg
-        else:
-                dg=results.dgIP
-        os.popen("nohup arpspoof -t "+target+" "+dg+" >/dev/null 2>&1 &")
-
-
 if(results.flush): #Restore iptables
         os.popen("iptables-restore < /etc/iptables/rules.v4")
    
@@ -309,6 +297,19 @@ if not(results.rule):
         os.popen("iptables -I FORWARD -p icmp --icmp-type 8 "+timeout+" -j ACCEPT")
      if("dns" in permit):
          os.popen("iptables -I FORWARD -p udp --dport 53 "+timeout+" -j ACCEPT")
+         
+if not(results.spoof=="none"): 
+      dgnet=results.spoof #format 192.168.1.0/24
+      dgip=dgnet.split("/")
+      dgip=dgip[0]
+      print "Started spoofing for:\n"
+      for ip in IPNetwork(dgnet):
+        pong=os.popen("ping -c 1 "+ip).read()
+        if("1 received" in pong):
+          os.popen("nohup arpspoof -t "+ip+" "+dgip+" >/dev/null 2>&1 &")
+          print ip+"\n"
+    
+
 
 if(results.killmitm):
     os.popen("killall arpspoof")
