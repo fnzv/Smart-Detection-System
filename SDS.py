@@ -139,7 +139,7 @@ if not(results.bancountry=="none"):
       os.popen("wget http://www.ipdeny.com/ipblocks/data/countries/"+code+".zone -P /tmp/"+code+".zone")
       iplist=os.popen("cat /tmp"+code+".zone").read()
       iplist=iplist.split()
-      for ip in iplist
+      for ip in iplist:
         os.popen("iptables -I FORWARD -d "+ip+" -j DROP")
         os.popen("iptables -I INPUT -d "+ip+" -j DROP")
         os.popen("iptables -I OUTPUT -d "+ip+" -j DROP")
