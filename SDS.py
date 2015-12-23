@@ -1,4 +1,3 @@
-
 #!/usr/bin/python
 #######  Smart Detecton System - An Easy to use Smart-Firewall coded in python
 #######  STATUS: Still under developement
@@ -27,6 +26,11 @@ import os,time,argparse,socket,pprint
 
 
 parser = argparse.ArgumentParser()
+
+
+parser.add_argument('-banCountry', action='store', default="none",
+                    dest='bancountry',
+                    help='Ban all IP addresses coming from given country italy--> it ..pakistan --> pk')
 
 parser.add_argument('-proxy', action='store', default="none",
                     dest='loadproxy',
@@ -127,6 +131,21 @@ if not(results.timerange=="none"): #09:00,18:00
         timeout="-m time --timestart "+time1+" --timestop "+time2
 else:
         timeout=""
+
+
+
+if not(results.bancountry=="none"):
+      code=results.bancountry
+      os.popen("wget http://www.ipdeny.com/ipblocks/data/countries/"+code+".zone -P /tmp/"+code+".zone")
+      iplist=os.popen("cat /tmp"+code+".zone").read()
+      iplist=iplist.split()
+      for ip in iplist
+        os.popen("iptables -I FORWARD -d "+ip+" -j DROP")
+        os.popen("iptables -I INPUT -d "+ip+" -j DROP")
+        os.popen("iptables -I OUTPUT -d "+ip+" -j DROP")
+        print ip+" DENIED"
+      
+      
 
 
 if not (results.trafflimit=="none"):
