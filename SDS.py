@@ -134,10 +134,10 @@ else:
 
 
 
-if not(results.bancountry=="none"):
+if not(results.bancountry=="none"): ## Could take some time.. ip lists are big..contain all ip ranges of countries
+      ## example : italy - it ,pakistan - pk, russia - ru, united states - us ,
       code=results.bancountry
-      os.popen("wget http://www.ipdeny.com/ipblocks/data/countries/"+code+".zone -P /tmp/"+code+".zone")
-      iplist=os.popen("cat /tmp"+code+".zone").read()
+      iplist=os.popen("curl  http://www.ipdeny.com/ipblocks/data/countries/"+code+".zone").read()
       iplist=iplist.split()
       for ip in iplist:
         os.popen("iptables -I FORWARD -d "+ip+" -j DROP")
