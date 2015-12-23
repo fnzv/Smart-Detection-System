@@ -14,9 +14,12 @@ Device Examples: (Raspberry pi,odroid,Desktop pc,DD-WRT or custom router,Virtual
 
 <br>
 <br>
+I Call these below part of the # "Offensive SDS Firewall"
 A Forced Way to be the firewall on the network even if you are not the administrator could be :<br>
--ARP Poisoning then Running the SDS Firewall<br>
--ICMP Redirect then Running the SDS firewall<br>
+-ARP Poisoning <br>
+-ICMP Redirect <br>
+-DNS Redirect<br>
+-Transparent Proxy Redirect<br>
 <br>
 
 ***WARNING***:Keyword based filtering could fail as it's an experimental feature of iptables .. overall works fine and blocks unwanted sites
