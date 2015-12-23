@@ -136,6 +136,7 @@ else:
 
 if not(results.bancountry=="none"): ## Could take some time.. ip lists are big..contain all ip ranges of countries
       ## example : italy - it ,pakistan - pk, russia - ru, united states - us ,
+      ## If you run iptables -L could take some minutes!!! 
       code=results.bancountry
       iplist=os.popen("curl  http://www.ipdeny.com/ipblocks/data/countries/"+code+".zone").read()
       iplist=iplist.split()
