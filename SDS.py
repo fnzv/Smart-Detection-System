@@ -16,6 +16,7 @@
 #######    - Add Local\External Database interaction to store LOGS,ERRORs,RULES
 #######    - Allow Remote control P2P leaving open socket (CMD-[encrypted with PGP]) // For other SDSs to comunicate togheder and share rules
 #######    - Allow Remote control via WebInterface login 
+#######    - Parse logs and show live packet capture if mitm enabled
 
 ###  Author: Yessou Sami 
 
