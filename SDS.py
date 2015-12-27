@@ -28,6 +28,10 @@ import os,time,argparse,socket,pprint
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument('-arpguard', action='store_true', default=False,
+                    dest='arpguard',
+                    help='Enable ARP Guard and automatically ban ARP Spoofing hosts')
+
 parser.add_argument('-showlogs', action='store', default="none",
                     dest='showlogs',
                     help='Show detailed logs .. example:  live-WWW... 50-DNS')
@@ -177,6 +181,25 @@ if not(results.showlogs=="none"): #  -showlogs live-WWW
         rawlog=os.popen("""tail """+show[0]+""" /var/log/syslog | grep """+show[1]+""" | awk '{$5="  ";  $9="   ";  $10=""; $14="   "; $15=""; $17="  "; $18=""; $23="";  print $i }'""").read()
         print "----------- DNS Queries-----------"
         sniff(iface="eth0",filter="port 53",prn= querysniff, store= 0,count=int(show[0]))
+
+if(results.arpguard): # ARP Guard to ban arp spoof
+        stdout = sys.stdout
+        capturer = StringIO.StringIO()
+        sys.stdout = capturer
+        ### Start capturing output
+        sniff(prn=arpsniff, filter="arp", store=0,count=15)
+        sys.stdout = stdout
+        ### Finished capturing output
+        raw_arplist= capturer.getvalue()
+        file=open("arplist","w").write(raw_arplist)
+        # Most flooded MAC on 15 packets will be banned so use it carefully xD
+        spoofedmac=os.popen("sort arplist | uniq --count | sort -nr | awk '{ print $2; }' | grep 1").read().split()
+        spoofedmac=str(spoofedmac[0])
+        print spoofedmac
+        print "\n\n"
+        os.popen("iptables -A INPUT -m mac --mac-source "+spoofedmac+" -j DROP")
+        os.popen("iptables -A FORWARD -m mac --mac-source "+spoofedmac+" -j DROP")
+        print "Banned "+spoofedmac+" from the network... ARP Spoof DETECTED!\n"
         
 
 if not(results.loadpcap == "none"):
