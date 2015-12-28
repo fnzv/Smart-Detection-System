@@ -23,6 +23,7 @@
 #!/usr/bin/python
 
 import os,time,argparse,socket,pprint
+from datetime import datetime, time
 
 ## Functions
 ########################
