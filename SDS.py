@@ -34,7 +34,25 @@ def querysniff(pkt): ##Passive sniff DNS
                 ip_dst=pkt[IP].dst
                 if pkt.haslayer(DNS) and pkt.getlayer(DNS).qr == 0:
                         print "Source : "+str(ip_src) +" Destination: "+str(ip_dst) +"DNS Query for Domain "+pkt.getlayer(DNS).qd.qname 
-
+                        
+def queryguard(pkt): ##dnsguard module ... need to fix duplicate entries..
+        if IP in pkt:
+                ip_src=pkt[IP].src
+                ip_dst=pkt[IP].dst
+                if pkt.haslayer(DNS) and pkt.getlayer(DNS).qr == 0:
+                        domain=pkt.getlayer(DNS).qd.qname
+                        bannedlist=open("dnslist","r").read()
+                        bannedlist=bannedlist.split()
+                        for url in bannedlist:
+                         os.popen("iptables -I FORWARD -p udp --dport 53 -m string --string '"+url+"' -j DROP")
+                         # ADD general rule
+                         if (url in domain):
+                                print ip_src+" is looking for a blocked domain ",domain
+                                iplist=os.popen("host "+domain+" | grep 'has addr' | awk '{ print $4;}'").read().split()
+                                for ip in iplist:
+                                                os.popen("iptables -I FORWARD -d "+ip+" -j DROP")
+                                                print "Domain resolved and Blocked!!!"
+                                                print "IP Blocked: ",ip
 
 
 def ipsniff(pkt): ##Passive sniff IP/Socket
@@ -55,6 +73,10 @@ def arpsniff(pkt): #arp monitor
 
 
 parser = argparse.ArgumentParser()
+
+parser.add_argument('-dnsguard', action='store', default=False,
+                    dest='arpguard',
+                    help='Enable DNS Guard, sniff queries and apply firewall rules on given dns blacklist based on a 100 query sample')
 
 parser.add_argument('-arpguard', action='store_true', default=False,
                     dest='arpguard',
@@ -239,6 +261,39 @@ if(results.arpguard): # ARP Guard to ban arp spoof.. Use if someone if arpspoofi
                 print "None is doing MAC Flooding"
                 print "Most duplicate MAC is: ",spoofedmac
 
+if not(results.dnsguard=="none"): ##Runs for N minutes then adds deny rules to those resolved ip addresses
+        urlfilter=results.dnsguard
+        stdout = sys.stdout
+        capturer = StringIO.StringIO()
+        sys.stdout=capturer
+        sniff(iface="eth0",filter="port 53",prn=queryguard, store= 0,count=100)
+        sys.stdout = stdout
+        raw_dnslog= capturer.getvalue()
+        print raw_dnslog
+        print "\n\n"
+#        file=open("dnslog","w").write(raw_dnslog) Other method but not worth
+#       for line in raw_dnslog.split():
+#        with open(urlfilter,"r") as f:
+#          for line in f:
+#               linea=open("dnslog","r").readline()
+#               print linea
+#               parsedurl=os.popen("echo '"+linea+"' | awk '{print $10;}'").read()
+#               print parsedurl," PARSED"
+#               if line in parsedurl:
+#                       print "WARNING!! Someone made a DNS Query for a banned url\n"
+#                       print "Resolving address and updating firewall rules!!"
+#                       iplist=os.popen("host "+url+" | grep 'has addr' | awk '{ print $4;}'").read().split()[0]iplist=os.popen("host "+url+" | grep 'has addr' | awk '{ print $4;}'").read().split()[0]
+#
+#                       print iplist
+                        #for ip in iplist:
+                                #os.popen("iptables -I FORWARD -d "+ip+" -j DROP")
+                                #print ip," BANNED"
+                                #banning all resolved ips
+#       print " Post  for"
+               # if bannedurl in url --> ban iptables
+   #Source : 1.1.1.1 Destination: 2.2.2.2  DNS Query for Domain www.google.com
+#
+#Source : 192.168.1.250 Destination: 208.67.220.220DNS Query for Domain 246.188.161.108.in-addr.arpa.
 
 if not(results.loadpcap == "none"):
                         print "Reading capture file and parsing ip addresses"
