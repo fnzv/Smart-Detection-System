@@ -24,6 +24,33 @@
 
 import os,time,argparse,socket,pprint
 
+## Functions
+########################
+########################
+def querysniff(pkt): ##Passive sniff DNS
+        if IP in pkt:
+                ip_src=pkt[IP].src
+                ip_dst=pkt[IP].dst
+                if pkt.haslayer(DNS) and pkt.getlayer(DNS).qr == 0:
+                        print "Source : "+str(ip_src) +" Destination: "+str(ip_dst)  "DNS Query "+ " Domain "+pkt.getlayer(DNS).qd.qname 
+
+
+
+def ipsniff(pkt): ##Passive sniff IP/Socket
+        if IP in pkt:
+                ip_src=pkt[IP].src
+                ip_dst=pkt[IP].dst
+                ip_src_port=pkt[IP].sport
+                ip_dst_port=pkt[IP].dport
+                print "Source : "+str(ip_src) +":"+str(ip_src_port)+" Destination: "+str(ip_dst)+":"+str(ip_dst_port)
+
+def arpsniff(pkt): #arp monitor
+    if ARP in pkt and pkt[ARP].op in (1,2): 
+        return pkt.sprintf("%ARP.hwsrc% %ARP.psrc%")
+
+########################
+########################
+
 
 
 parser = argparse.ArgumentParser()
@@ -182,25 +209,35 @@ if not(results.showlogs=="none"): #  -showlogs live-WWW
         print "----------- DNS Queries-----------"
         sniff(iface="eth0",filter="port 53",prn= querysniff, store= 0,count=int(show[0]))
 
-if(results.arpguard): # ARP Guard to ban arp spoof
+if(results.arpguard): # ARP Guard to ban arp spoof.. Use if someone if arpspoofing.. if not better not to avoid mac banning your router
         stdout = sys.stdout
         capturer = StringIO.StringIO()
+        beginscan= datetime.now()
         sys.stdout = capturer
         ### Start capturing output
-        sniff(prn=arpsniff, filter="arp", store=0,count=15)
+        sniff(prn=arpsniff, filter="arp", store=0,count=10)
         sys.stdout = stdout
         ### Finished capturing output
         raw_arplist= capturer.getvalue()
+        finishscan = datetime.now()
+        print "Started at: ",beginscan
+        print "Finished at: ",finishscan
         file=open("arplist","w").write(raw_arplist)
-        # Most flooded MAC on 15 packets will be banned so use it carefully xD
+        times=os.popen("sort arplist | uniq --count | sort -nr").read().split()[0]
+        seconds=str((finishscan - beginscan).seconds)
+        print "Found MAC Flooded for "+times+" times in "+seconds+" seconds"
         spoofedmac=os.popen("sort arplist | uniq --count | sort -nr | awk '{ print $2; }' | grep 1").read().split()
         spoofedmac=str(spoofedmac[0])
-        print spoofedmac
-        print "\n\n"
-        os.popen("iptables -A INPUT -m mac --mac-source "+spoofedmac+" -j DROP")
-        os.popen("iptables -A FORWARD -m mac --mac-source "+spoofedmac+" -j DROP")
-        print "Banned "+spoofedmac+" from the network... ARP Spoof DETECTED!\n"
-        
+        if not(seconds>10 or times<5):
+                print "Attacker is: ",spoofedmac
+                os.popen("iptables -A INPUT -m mac --mac-source "+spoofedmac+" -j DROP")
+                os.popen("iptables -A FORWARD -m mac --mac-source "+spoofedmac+" -j DROP")
+                print "Banned "+spoofedmac+" from the network... ARP Spoof DETECTED!\n"
+                os.popen("rm arplist")
+        else:
+                print "None is doing MAC Flooding"
+                print "Most duplicate MAC is: ",spoofedmac
+
 
 if not(results.loadpcap == "none"):
                         print "Reading capture file and parsing ip addresses"
