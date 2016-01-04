@@ -218,19 +218,21 @@ if not (results.trafflimit=="none"):
       os.popen("iptables -I OUTPUT -p udp -m limit --limit "+tl+" "+timeout+" -j ACCEPT")
       os.popen("iptables -I FORWARD -p udp -m limit --limit "+tl+" "+timeout+" -j ACCEPT")
       
-if not(results.showlogs=="none"): #  -showlogs live-WWW
-      show=results.showlogs
-      show=show.split('-')
-      if("live" in show[0]): ## 
+if not(results.showlogs=="none"): #  shows live packet logging
+      res=results.showlogs
+      if("dns" in res): ##
         ## tail -f /var/log/syslog | grep WWW | awk '{$5="  ";  $9="   ";  $10=""; $14="   "; $15=""; $17="  "; $18=""; $23="";  print $i }'
         ## "parsed" logs to show only important info
-        rawlog=os.popen("""tail -f /var/log/syslog | grep """+show[1]+""" | awk '{$5="  ";  $9="   ";  $10=""; $14="   "; $15=""; $17="  "; $18=""; $23="";  print $i }'""").read()
-        sniff(iface= interface,filter="port 53",prn= querysniff, store= 0)
-      else:
-        #-showlogs 50-WWW   // last 50 lines of www logs + 50 dns "actual" logs (iptables syslogs but also passive dns)
-        rawlog=os.popen("""tail """+show[0]+""" /var/log/syslog | grep """+show[1]+""" | awk '{$5="  ";  $9="   ";  $10=""; $14="   "; $15=""; $17="  "; $18=""; $23="";  print $i }'""").read()
-        print "----------- DNS Queries-----------"
-        sniff(iface="eth0",filter="port 53",prn= querysniff, store= 0,count=int(show[0]))
+        print os.popen(""""tail -n 100 /var/log/syslog | grep DNS | awk '{$5="  ";  $9="   ";  $10=""; $14="   "; $15=""; $17="  "; $18=""; $23="";  print $i }'""").read()
+
+      if("www" in res):
+        print os.popen("""tail -n 100 /var/log/syslog | grep WWW | awk '{$5="  ";  $9="   ";  $10=""; $14="   "; $15=""; $17="  "; $18=""; $23="";  print $i }'""").read()
+
+      if("credentials" in res):
+         print os.popen("""tail -n 100 /var/log/syslog | grep -e USER -e PASSW | awk '{$5="  ";  $9="   ";  $10=""; $14="   "; $15=""; $17="  "; $18=""; $23="";  print $i }'""").read()
+
+
+
 
 if(results.arpguard): # ARP Guard to ban arp spoof.. Use if someone if arpspoofing.. if not better not to avoid mac banning your router
         stdout = sys.stdout
