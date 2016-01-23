@@ -74,7 +74,7 @@ def arpsniff(pkt): #arp monitor
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('-dnsguard', action='store', default=False,
+parser.add_argument('-dnsguard', action='store', default="none",
                     dest='arpguard',
                     help='Enable DNS Guard, sniff queries and apply firewall rules on given dns blacklist based on a 100 query sample')
 
