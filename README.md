@@ -20,6 +20,7 @@ A Forced Way to be the firewall on the network even if you are not the administr
 -ICMP Redirect <br>
 -DNS Redirect<br>
 -Transparent Proxy Redirect<br>
+-Traffic control(Bandwidth,Delays,Packets..) <br>
 <br>
 
 ***WARNING***:Keyword based filtering could fail as it's an experimental feature of iptables .. overall works fine and blocks unwanted sites
